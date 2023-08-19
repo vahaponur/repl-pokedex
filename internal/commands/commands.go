@@ -3,8 +3,9 @@ package commands
 import (
 	"errors"
 	"fmt"
-	"internal/pokeapi"
 	"os"
+
+	pokeapi "github.com/vahaponur/pokeapi"
 )
 
 type cliCommand struct {
@@ -26,7 +27,7 @@ func commandMap() error {
 	if config.Next == nil {
 		return errors.New("This is the end of the map")
 	}
-	locArea := pokeapi.GetNextLocationArea(*config.Next)
+	locArea := pokeapi.GetLocationArea(*config.Next)
 	for _, area := range locArea.Results {
 		fmt.Println(area.Name)
 	}
@@ -41,7 +42,7 @@ func commandMapb() error {
 		*config.Next = firstLocationAreaURL
 		return errors.New("No data to show, this the beginning of the map")
 	}
-	locArea := pokeapi.GetNextLocationArea(*config.Previous)
+	locArea := pokeapi.GetLocationArea(*config.Previous)
 	for _, area := range locArea.Results {
 		fmt.Println(area.Name)
 	}
