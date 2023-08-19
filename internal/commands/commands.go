@@ -1,7 +1,9 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
+	"internal/pokeapi"
 	"os"
 )
 
@@ -10,7 +12,45 @@ type cliCommand struct {
 	description string
 	Callback    func() error
 }
+type MapConfig struct {
+	Next     *string
+	Previous *string
+}
+type LocationArea = pokeapi.LocationArea
 
+var firstLocationAreaURL = "https://pokeapi.co/api/v2/location-area/"
+var currentLocationAreaURL = "https://pokeapi.co/api/v2/location-area/"
+var config MapConfig = MapConfig{Next: &currentLocationAreaURL, Previous: nil}
+
+func commandMap() error {
+	if config.Next == nil {
+		return errors.New("This is the end of the map")
+	}
+	locArea := pokeapi.GetNextLocationArea(*config.Next)
+	for _, area := range locArea.Results {
+		fmt.Println(area.Name)
+	}
+
+	config.Previous = locArea.Previous
+	config.Next = locArea.Next
+
+	return nil
+}
+func commandMapb() error {
+	if config.Previous == nil {
+		*config.Next = firstLocationAreaURL
+		return errors.New("No data to show, this the beginning of the map")
+	}
+	locArea := pokeapi.GetNextLocationArea(*config.Previous)
+	for _, area := range locArea.Results {
+		fmt.Println(area.Name)
+	}
+
+	config.Previous = locArea.Previous
+	config.Next = locArea.Next
+
+	return nil
+}
 func commandHelp() error {
 	fmt.Println("--Pokedex Usage--")
 	fmt.Println("")
@@ -38,6 +78,16 @@ func GetCliCommands() map[string]cliCommand {
 			name:        "exit",
 			description: "Exit the Pokedex",
 			Callback:    commandExit,
+		},
+		"map": {
+			name:        "map",
+			description: "Get Location Areas (Next 20 for each call)",
+			Callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Get 20 Previous Location Areas (Throws error if map in the first call)",
+			Callback:    commandMapb,
 		},
 	}
 }
