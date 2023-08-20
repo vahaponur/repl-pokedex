@@ -11,19 +11,20 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	Callback    func() error
+	Callback    func(dynamic_optional ...string) error
 }
 type MapConfig struct {
 	Next     *string
 	Previous *string
 }
 type LocationArea = pokeapi.LocationArea
+type AreaDetails = pokeapi.AreaDetails
 
 var firstLocationAreaURL = "https://pokeapi.co/api/v2/location-area/"
 var currentLocationAreaURL = "https://pokeapi.co/api/v2/location-area/"
 var config MapConfig = MapConfig{Next: &currentLocationAreaURL, Previous: nil}
 
-func commandMap() error {
+func commandMap(dynamic_optional ...string) error {
 	if config.Next == nil {
 		return errors.New("This is the end of the map")
 	}
@@ -37,7 +38,7 @@ func commandMap() error {
 
 	return nil
 }
-func commandMapb() error {
+func commandMapb(dynamic_optional ...string) error {
 	if config.Previous == nil {
 		*config.Next = firstLocationAreaURL
 		return errors.New("No data to show, this the beginning of the map")
@@ -52,7 +53,7 @@ func commandMapb() error {
 
 	return nil
 }
-func commandHelp() error {
+func commandHelp(dynamic_optional ...string) error {
 	fmt.Println("--Pokedex Usage--")
 	fmt.Println("")
 	coms := GetCliCommands()
@@ -63,12 +64,20 @@ func commandHelp() error {
 	return nil
 }
 
-func commandExit() error {
+func commandExit(dynamic_optional ...string) error {
 	os.Exit(0)
 	return nil
 }
+func commandExplore(dynamic_optional ...string) error {
+	pokes := pokeapi.GetPokemonsFromLocArea(dynamic_optional[0])
+	fmt.Println("Exploring Pokemons")
+	for _, encounter := range pokes.PokemonEncounters {
+		fmt.Println(encounter.Pokemon.Name)
+	}
+	return nil
 
-func GetCliCommands() map[string]cliCommand {
+}
+func GetCliCommands(dynamic_optional ...string) map[string]cliCommand {
 	return map[string]cliCommand{
 		"help": {
 			name:        "help",
@@ -89,6 +98,11 @@ func GetCliCommands() map[string]cliCommand {
 			name:        "mapb",
 			description: "Get 20 Previous Location Areas (Throws error if map in the first call)",
 			Callback:    commandMapb,
+		},
+		"explore": {
+			name:        "explore <location_area_name>",
+			description: "Get Pokemons to encounter in that location area",
+			Callback:    commandExplore,
 		},
 	}
 }
