@@ -60,25 +60,6 @@ func commandCatch(dynamic_optional ...string) error {
 	}
 	return nil
 }
-func commandInspect(dynamic_optional ...string) error {
-	pokeName := dynamic_optional[0]
-	pokemon, ok := pokedex[pokeName]
-	if !ok {
-		return errors.New(fmt.Sprintf("You have not caught that pokemon yet"))
-	}
-	fmt.Printf("Name: %v\n", pokemon.Name)
-	fmt.Printf("Height: %v\n", pokemon.Height)
-	fmt.Printf("Weight: %v\n", pokemon.Weight)
-	fmt.Println("Stats:")
-	for _, stat := range pokemon.Stats {
-		fmt.Printf(" -%v: %v\n", stat.Stat.Name, stat.BaseStat)
-	}
-	fmt.Println("Types:")
-	for _, typea := range pokemon.Types {
-		fmt.Printf(" -%v\n", typea.Type.Name)
-	}
-	return nil
-}
 func commandMapb(dynamic_optional ...string) error {
 	if config.Previous == nil {
 		*config.Next = firstLocationAreaURL
@@ -149,11 +130,6 @@ func GetCliCommands(dynamic_optional ...string) map[string]cliCommand {
 			name:        "catch <pokemon_name>",
 			description: "Throws a Pokeball to given pokemon, success rate depens on base experience\n (Higher is harder)",
 			Callback:    commandCatch,
-		},
-		"inspect": {
-			name:        "inspect <pokemon_name>",
-			description: "Inspects a pokemon if it is on the Pokedex",
-			Callback:    commandInspect,
 		},
 	}
 }
