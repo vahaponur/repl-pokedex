@@ -98,8 +98,8 @@ func commandHelp(dynamic_optional ...string) error {
 	fmt.Println("--Pokedex Usage--")
 	fmt.Println("")
 	coms := GetCliCommands()
-	for key, val := range coms {
-		fmt.Printf("%v : %v\n", key, val.description)
+	for _, val := range coms {
+		fmt.Printf("%v : %v\n", val.name, val.description)
 		fmt.Println("")
 	}
 	return nil
@@ -117,6 +117,16 @@ func commandExplore(dynamic_optional ...string) error {
 	}
 	return nil
 
+}
+func commandPokedex(dynamic_optional ...string) error {
+	if len(pokedex) == 0 {
+		return errors.New("Pokedex EMPTY!")
+	}
+	fmt.Println("Your Pokedex:")
+	for _, pokemon := range pokedex {
+		fmt.Printf(" -%v\n", pokemon.Name)
+	}
+	return nil
 }
 func GetCliCommands(dynamic_optional ...string) map[string]cliCommand {
 	return map[string]cliCommand{
@@ -154,6 +164,11 @@ func GetCliCommands(dynamic_optional ...string) map[string]cliCommand {
 			name:        "inspect <pokemon_name>",
 			description: "Inspects a pokemon if it is on the Pokedex",
 			Callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Shows the name of pokemons on your pokedex",
+			Callback:    commandPokedex,
 		},
 	}
 }

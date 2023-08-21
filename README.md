@@ -19,6 +19,9 @@ go build && ./repl-pokedex
 "explore <area_name>" will get the pokemons in that area, you can learn area names with "map" or "mapb"
 EXAMPLE USAGE
 "explore canalave-city-area" will get all the pokemons in canavale city area
+"catch <pokemon_name>" Throws a Pokeball to given pokemon, success rate depens on base experience (Higher is harder)
+"inspect <pokemon_name>" Inspects a pokemon if it is on the Pokedex
+"pokedex" : Shows the name of pokemons on your pokedex
 "exit" will stop the program
 ```
 
