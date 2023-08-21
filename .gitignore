@@ -1,1 +1,23 @@
-repl-pokedex*
+# Go build artifacts
+/bin/
+/pkg/
+
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+*.so
+
+# Compiled Executables
+*.exe
+*.out
+
+# Go test and coverage files
+*.test
+*.cover
+
+# Caches and temporary files
+/vendor/
+.cache/
+.testcache/
+.idea/
+.vscode/
