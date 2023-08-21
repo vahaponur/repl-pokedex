@@ -3,7 +3,9 @@ package commands
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"os"
+	"time"
 
 	pokeapi "github.com/vahaponur/pokeapi"
 )
@@ -19,7 +21,9 @@ type MapConfig struct {
 }
 type LocationArea = pokeapi.LocationArea
 type AreaDetails = pokeapi.AreaDetails
+type Pokemon = pokeapi.Pokemon
 
+var pokedex map[string]Pokemon = make(map[string]pokeapi.Pokemon)
 var firstLocationAreaURL = "https://pokeapi.co/api/v2/location-area/"
 var currentLocationAreaURL = "https://pokeapi.co/api/v2/location-area/"
 var config MapConfig = MapConfig{Next: &currentLocationAreaURL, Previous: nil}
@@ -36,6 +40,24 @@ func commandMap(dynamic_optional ...string) error {
 	config.Previous = locArea.Previous
 	config.Next = locArea.Next
 
+	return nil
+}
+func commandCatch(dynamic_optional ...string) error {
+	pokeName := dynamic_optional[0]
+	if _, ok := pokedex[pokeName]; ok {
+		return errors.New(fmt.Sprintf("%v already caughted", pokeName))
+	}
+	pokemon := pokeapi.GetPokemonFromName(pokeName)
+	source := rand.NewSource(time.Now().UnixMilli())
+	r1 := rand.New(source)
+	possibilityDecider := r1.Intn(pokemon.BaseExperience)
+	fmt.Printf("Throwing pokeball to %v\n", pokeName)
+	if possibilityDecider < 80 {
+		pokedex[pokeName] = pokemon
+		fmt.Printf("%v caughted\n", pokeName)
+	} else {
+		fmt.Printf("%v escaped\n", pokeName)
+	}
 	return nil
 }
 func commandMapb(dynamic_optional ...string) error {
@@ -103,6 +125,11 @@ func GetCliCommands(dynamic_optional ...string) map[string]cliCommand {
 			name:        "explore <location_area_name>",
 			description: "Get Pokemons to encounter in that location area",
 			Callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch <pokemon_name>",
+			description: "Throws a Pokeball to given pokemon, success rate depens on base experience\n (Higher is harder)",
+			Callback:    commandCatch,
 		},
 	}
 }
